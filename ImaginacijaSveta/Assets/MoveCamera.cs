@@ -6,7 +6,7 @@ public class MoveCamera : MonoBehaviour
 {
     public GameObject maincamera;
     public GameObject[] nodes;
-    public GameObject[] look;
+    Transform[] look;
     public float speed;
     public float damping;
     public int size;
@@ -14,7 +14,14 @@ public class MoveCamera : MonoBehaviour
 
     void Start()
     {
-        
+        look = new Transform[size];
+        for ( int k = 0; k<size; k++)
+        {
+            foreach (Transform child in nodes[k].transform)
+            {
+                look[k] = child;
+            }
+        }
     }
 
     void Update()
@@ -23,7 +30,7 @@ public class MoveCamera : MonoBehaviour
         float step = speed * Time.deltaTime;
 
         maincamera.transform.position = Vector3.MoveTowards(maincamera.transform.position, new Vector3(nodes[p].transform.position.x, nodes[p].transform.position.y, nodes[p].transform.position.z), step);
-        Quaternion rotation = Quaternion.LookRotation(look[p].transform.position - maincamera.transform.position);
+        Quaternion rotation = Quaternion.LookRotation(look[p].position - maincamera.transform.position);
         maincamera.transform.rotation = Quaternion.Slerp(maincamera.transform.rotation, rotation, Time.deltaTime * damping);
 
         if (Vector3.Distance(maincamera.transform.position, nodes[p].transform.position) < 0.001f)
