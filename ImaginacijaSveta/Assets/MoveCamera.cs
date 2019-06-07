@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,9 @@ public class MoveCamera : MonoBehaviour
     public float damping;
     public int size;
     int p = 0;
+	
+	public double timer = 4.0;
+	public double timerMax = 4.0;
 
     void Start()
     {
@@ -26,20 +30,25 @@ public class MoveCamera : MonoBehaviour
 
     void Update()
     {
+		timer += Time.deltaTime;
+		
+		if (timer >= timerMax) {
+			float step = speed * Time.deltaTime;
 
-        float step = speed * Time.deltaTime;
+			maincamera.transform.position = Vector3.MoveTowards(maincamera.transform.position, new Vector3(nodes[p].transform.position.x, nodes[p].transform.position.y, nodes[p].transform.position.z), step);
+			Quaternion rotation = Quaternion.LookRotation(look[p].position - maincamera.transform.position);
+			maincamera.transform.rotation = Quaternion.Slerp(maincamera.transform.rotation, rotation, Time.deltaTime * damping);
 
-        maincamera.transform.position = Vector3.MoveTowards(maincamera.transform.position, new Vector3(nodes[p].transform.position.x, nodes[p].transform.position.y, nodes[p].transform.position.z), step);
-        Quaternion rotation = Quaternion.LookRotation(look[p].position - maincamera.transform.position);
-        maincamera.transform.rotation = Quaternion.Slerp(maincamera.transform.rotation, rotation, Time.deltaTime * damping);
-
-        if (Vector3.Distance(maincamera.transform.position, nodes[p].transform.position) < 0.001f)
-        {
-            p++;
-            if( p >= size)
-            {
-                p = 0;
-            }
-        }
+			if (Vector3.Distance(maincamera.transform.position, nodes[p].transform.position) < 0.001f)
+			{
+				timer = 0.0;
+				p++;
+				if( p >= size)
+				{
+					p = 0;
+				}
+			}
+		}
     }
+	
 }
