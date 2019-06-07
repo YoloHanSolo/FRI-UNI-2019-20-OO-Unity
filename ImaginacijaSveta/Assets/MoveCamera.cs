@@ -31,17 +31,21 @@ public class MoveCamera : MonoBehaviour
     void Update()
     {
 		timer += Time.deltaTime;
+		float step;
 		
 		if (timer >= timerMax) {
-			float step = speed * Time.deltaTime;
-
+			if (p % 2 == 0) {
+				step = speed * Time.deltaTime;
+			} else {
+				step = speed * Time.deltaTime / 2;
+			}
 			maincamera.transform.position = Vector3.MoveTowards(maincamera.transform.position, new Vector3(nodes[p].transform.position.x, nodes[p].transform.position.y, nodes[p].transform.position.z), step);
 			Quaternion rotation = Quaternion.LookRotation(look[p].position - maincamera.transform.position);
 			maincamera.transform.rotation = Quaternion.Slerp(maincamera.transform.rotation, rotation, Time.deltaTime * damping);
 
 			if (Vector3.Distance(maincamera.transform.position, nodes[p].transform.position) < 0.001f)
 			{
-				timer = 0.0;
+				//timer = 0.0;
 				p++;
 				if( p >= size)
 				{
